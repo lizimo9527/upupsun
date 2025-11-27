@@ -24,9 +24,26 @@ public class GameManager : MonoBehaviour
     public GameObject sunshinePrefab; // Sunshine预制体，需要在Inspector中赋值（可选）
     public int sunshineCount = 5; // 每次生成的sunshine数量
     public float sunshineSpawnInterval = 0.15f; // 每个sunshine之间的生成间隔（秒）
-    public float sunshineInitialForce = 1f; // 初始向下的力的大小
+    public float sunshineInitialForce = 1f; // 初始力的大小
     public float sunshineHorizontalSpread = 0.3f; // 水平方向的随机扩散范围
     public float sunshineSpawnDelay = 0.1f; // 开始生成前的延迟（秒）
+    
+    public enum SunshineDirection
+    {
+        VerticalDown,      // 垂直向下
+        HorizontalRight,   // 水平向右斜向下
+        HorizontalLeft     // 水平向左斜向下
+    }
+    
+    [Tooltip("Sunshine喷射方向：VerticalDown=垂直向下，HorizontalRight=向右斜向下，HorizontalLeft=向左斜向下")]
+    public SunshineDirection sunshineDirection = SunshineDirection.VerticalDown;
+    
+    [Tooltip("水平喷射时的水平力度（0-1，1为完全水平，0为完全垂直）")]
+    [Range(0f, 1f)]
+    public float sunshineHorizontalForceRatio = 0.9f; // 水平力度比例（默认0.9，更偏向水平）
+    
+    [Tooltip("水平喷射时的垂直力度范围（向下为负值，绝对值越小水平分量越明显）")]
+    public Vector2 sunshineVerticalForceRange = new Vector2(-0.5f, -0.3f); // 垂直力度范围（减小绝对值让水平更明显）
     
     [Header("Progress & Stars")]
     public Slider inkSlider; // Slider 进度条（显示墨水剩余量）
@@ -54,6 +71,9 @@ public class GameManager : MonoBehaviour
     public float oneStarInkThreshold = 80f; // 一星条件：使用墨水超过80%
     public float twoStarInkThreshold = 50f; // 二星条件：使用墨水超过50%
     public float threeStarInkThreshold = 30f; // 三星条件：使用墨水超过30%（用的越少越好）
+    
+    [Header("Delayed Drop Settings")]
+    public bool triggerDelayedDropsOnLineComplete = true; // 完成画线后触发延迟掉落
     
     private bool hasGeneratedSunshine = false; // 标记是否已经生成过sunshine
     private int collectedSunshineCount = 0; // 已收集的 sunshine 数量
@@ -125,6 +145,20 @@ public class GameManager : MonoBehaviour
             // 通关时根据墨水使用量判定星星
             CalculateStars();
             OnGameWin();
+        }
+    }
+    
+    private void TriggerDelayedDrops()
+    {
+        if (!triggerDelayedDropsOnLineComplete)
+        {
+            return;
+        }
+
+        DelayedDrop[] delayedDrops = FindObjectsOfType<DelayedDrop>();
+        foreach (var drop in delayedDrops)
+        {
+            drop.StartDrop(this);
         }
     }
     
@@ -446,6 +480,8 @@ public class GameManager : MonoBehaviour
                 lineRb.AddForce(Vector2.down * lineInitialDownwardForce, ForceMode2D.Impulse);
             }
             
+            TriggerDelayedDrops();
+            
             // 画线完成后生成sunshine
             if (!hasGeneratedSunshine && sun != null)
             {
@@ -495,17 +531,49 @@ public class GameManager : MonoBehaviour
                 sunshine = CreateSunshineObject(spawnPosition);
             }
             
-            // 给sunshine添加向下的初始力，让它自然掉落
+            // 给sunshine添加初始力，让它自然掉落
             Rigidbody2D rb = sunshine.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
                 // 设置连续碰撞检测，防止快速移动时穿透
                 rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-                // 主要向下，带一点小的水平随机偏移，让它们看起来更自然
-                Vector2 fallDirection = new Vector2(
-                    Random.Range(-0.2f, 0.2f), // 小的水平偏移
-                    -1f // 主要向下
-                ).normalized;
+                
+                Vector2 fallDirection;
+                
+                switch (sunshineDirection)
+                {
+                    case SunshineDirection.HorizontalRight:
+                        // 水平向右斜向下
+                        {
+                            // 使用水平力度比例直接控制水平分量，垂直分量作为补充
+                            float horizontalForce = sunshineHorizontalForceRatio;
+                            float verticalForce = Random.Range(sunshineVerticalForceRange.x, sunshineVerticalForceRange.y);
+                            // 归一化以确保力度一致，但水平分量会占主导
+                            fallDirection = new Vector2(horizontalForce, verticalForce).normalized;
+                        }
+                        break;
+                        
+                    case SunshineDirection.HorizontalLeft:
+                        // 水平向左斜向下
+                        {
+                            // 使用水平力度比例直接控制水平分量，垂直分量作为补充
+                            float horizontalForce = -sunshineHorizontalForceRatio; // 向左为负
+                            float verticalForce = Random.Range(sunshineVerticalForceRange.x, sunshineVerticalForceRange.y);
+                            // 归一化以确保力度一致，但水平分量会占主导
+                            fallDirection = new Vector2(horizontalForce, verticalForce).normalized;
+                        }
+                        break;
+                        
+                    case SunshineDirection.VerticalDown:
+                    default:
+                        // 垂直向下：主要向下，带一点小的水平随机偏移
+                        fallDirection = new Vector2(
+                            Random.Range(-0.2f, 0.2f), // 小的水平偏移
+                            -1f // 主要向下
+                        ).normalized;
+                        break;
+                }
+                
                 rb.AddForce(fallDirection * sunshineInitialForce, ForceMode2D.Impulse);
             }
             

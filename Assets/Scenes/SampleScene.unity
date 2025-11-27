@@ -1320,20 +1320,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afdab043e4aa51a45b3e6db576e43f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pausePanel: {fileID: 885696959}
-  settingButton: {fileID: 1270571072}
-  pauseButton: {fileID: 1270571072}
-  backButton: {fileID: 0}
-  homeButton: {fileID: 1514204984}
-  restartButton: {fileID: 243594581}
-  resumeButton: {fileID: 0}
-  musicSlider: {fileID: 0}
-  voiceSlider: {fileID: 0}
-  enableEscKey: 1
-  homeSceneName: game directory
-  pausePanelSortOrder: 100
-  isPaused: 0
-  pausePanelCanvas: {fileID: 0}
 --- !u!114 &621578512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3952,20 +3938,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afdab043e4aa51a45b3e6db576e43f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pausePanel: {fileID: 885696959}
-  settingButton: {fileID: 0}
-  pauseButton: {fileID: 1270571072}
-  backButton: {fileID: 0}
-  homeButton: {fileID: 1514204984}
-  restartButton: {fileID: 243594581}
-  resumeButton: {fileID: 0}
-  musicSlider: {fileID: 0}
-  voiceSlider: {fileID: 0}
-  enableEscKey: 1
-  homeSceneName: Start
-  pausePanelSortOrder: 100
-  isPaused: 0
-  pausePanelCanvas: {fileID: 0}
 --- !u!4 &1711316349
 Transform:
   m_ObjectHideFlags: 0
@@ -4153,6 +4125,7 @@ RectTransform:
   - {fileID: 1270571071}
   - {fileID: 1215539653}
   - {fileID: 885696960}
+  - {fileID: 3000000016}
   - {fileID: 3000000018}
   - {fileID: 3000000020}
   - {fileID: 985579301}
@@ -4758,11 +4731,11 @@ Transform:
   m_GameObject: {fileID: 3000000002}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.09, y: 3.4, z: 90}
-  m_LocalScale: {x: 0.05968092, y: 0.06319886, z: 0.0125}
+  m_LocalPosition: {x: 167.2, y: 272, z: 0}
+  m_LocalScale: {x: 4.7744737, y: 5.0559087, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1814390589}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3000000017
 SpriteRenderer:
@@ -5035,9 +5008,19 @@ MonoBehaviour:
   gameDirectorySceneName: game directory
   sampleSceneName: SampleScene
   startSceneName: Start
+  no2SceneName: No.2
+  no3SceneName: No.3
+  no4SceneName: No.4
+  no5SceneName: No.5
+  no6SceneName: No.6
   gameDirectorySceneIndex: 1
   sampleSceneIndex: 2
   startSceneIndex: 0
+  no2SceneIndex: 3
+  no3SceneIndex: 4
+  no4SceneIndex: 5
+  no5SceneIndex: 6
+  no6SceneIndex: 7
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -5051,7 +5034,6 @@ SceneRoots:
   - {fileID: 1134118327}
   - {fileID: 1819058662}
   - {fileID: 1232097638}
-  - {fileID: 3000000016}
   - {fileID: 1814390589}
   - {fileID: 1052294362}
   - {fileID: 1711316349}

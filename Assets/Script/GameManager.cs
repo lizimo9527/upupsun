@@ -63,6 +63,10 @@ public class GameManager : MonoBehaviour
     public Button passPanelNextButton; // PassPanel中的下一关按钮
     public string nextSceneName = "No.2"; // 下一关的场景名称
     
+    [Header("Fireworks Effect")]
+    public FireworksEffect fireworksEffect; // 烟花效果控制器（可选）
+    public bool enableFireworks = true; // 是否启用烟花效果
+    
     [Header("Ink System")]
     public float maxInkAmount = 100f; // 最大墨水量
     public float inkUsedForOneUnit = 1f; // 每单位长度消耗的墨水量
@@ -290,6 +294,39 @@ public class GameManager : MonoBehaviour
         
         passPanel.SetActive(true);
         UpdatePassPanelStars();
+        
+        // 播放烟花效果
+        if (enableFireworks)
+        {
+            PlayFireworks();
+        }
+    }
+    
+    /// <summary>
+    /// 播放烟花效果
+    /// </summary>
+    private void PlayFireworks()
+    {
+        if (fireworksEffect != null)
+        {
+            fireworksEffect.PlayFireworks();
+        }
+        else
+        {
+            // 如果没有手动指定，尝试自动查找或创建
+            fireworksEffect = FindObjectOfType<FireworksEffect>();
+            if (fireworksEffect == null)
+            {
+                // 创建一个新的烟花效果对象
+                GameObject fireworksObj = new GameObject("FireworksEffect");
+                fireworksEffect = fireworksObj.AddComponent<FireworksEffect>();
+            }
+            
+            if (fireworksEffect != null)
+            {
+                fireworksEffect.PlayFireworks();
+            }
+        }
     }
     
     /// <summary>

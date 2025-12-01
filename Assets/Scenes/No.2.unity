@@ -419,7 +419,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -130, y: 343.09998}
+  m_AnchoredPosition: {x: -125, y: 316.77}
   m_SizeDelta: {x: 186.52, y: 91.68}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &64015998
@@ -4477,6 +4477,8 @@ MonoBehaviour:
   passPanelRestartButton: {fileID: 2009484290}
   passPanelNextButton: {fileID: 1543772324}
   nextSceneName: No.3
+  fireworksEffect: {fileID: 0}
+  enableFireworks: 1
   maxInkAmount: 100
   inkUsedForOneUnit: 1
   inkUsageMultiplier: 4

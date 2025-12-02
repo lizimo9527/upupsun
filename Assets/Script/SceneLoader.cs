@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -21,6 +22,167 @@ public class SceneLoader : MonoBehaviour
     [SerializeField] private int no5SceneIndex = 6; // No.5 场景在 Build Settings 中的索引
     [SerializeField] private int no6SceneIndex = 7; // No.6 场景在 Build Settings 中的索引
     
+    private void Start()
+    {
+        // 如果在 game directory 场景中，自动绑定按钮
+        // 使用 Start 而不是 Awake，确保所有对象都已初始化
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        Debug.Log($"SceneLoader Start: 当前场景名称 = '{currentSceneName}'");
+        
+        if (currentSceneName == "game directory" || currentSceneName.Contains("game directory"))
+        {
+            Debug.Log("SceneLoader: 检测到 game directory 场景，开始绑定按钮...");
+            // 延迟一帧绑定，确保所有UI元素都已创建
+            StartCoroutine(DelayedBindButtons());
+        }
+    }
+    
+    private System.Collections.IEnumerator DelayedBindButtons()
+    {
+        // 等待一帧，确保所有对象都已初始化
+        yield return null;
+        BindGameDirectoryButtons();
+    }
+    
+    /// <summary>
+    /// 自动绑定 game directory 场景中的按钮
+    /// </summary>
+    private void BindGameDirectoryButtons()
+    {
+        // 检查 EventSystem
+        if (UnityEngine.EventSystems.EventSystem.current == null)
+        {
+            Debug.LogError("GameDirectory: 未找到 EventSystem！按钮点击将无法工作。");
+            GameObject eventSystemObj = new GameObject("EventSystem");
+            eventSystemObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
+            eventSystemObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+            Debug.Log("GameDirectory: 已创建 EventSystem");
+        }
+
+        // 清除所有按钮的旧监听器并重新绑定
+        // backButton -> Start 场景
+        BindButtonByName("backButton", LoadStartScene, "backButton -> Start");
+
+        // NoButton1 -> SampleScene 场景
+        BindButtonByName("NoButton1", LoadLevel1, "NoButton1 -> SampleScene");
+
+        // NoButton2 -> No.2 场景
+        BindButtonByName("NoButton 2", LoadLevel2, "NoButton2 -> No.2");
+
+        // NoButton3 -> No.3 场景
+        BindButtonByName("NoButton 3", LoadLevel3, "NoButton3 -> No.3");
+
+        // NoButton4 -> No.4 场景
+        BindButtonByName("NoButton 4", LoadLevel4, "NoButton4 -> No.4");
+
+        // NoButton5 -> No.5 场景
+        BindButtonByName("NoButton 5", LoadLevel5, "NoButton5 -> No.5");
+
+        // NoButton6 -> No.6 场景
+        BindButtonByName("NoButton 6", LoadLevel6, "NoButton6 -> No.6");
+        
+        Debug.Log("GameDirectory: 所有按钮绑定完成！");
+    }
+
+    /// <summary>
+    /// 通用的按钮绑定方法
+    /// </summary>
+    private void BindButtonByName(string buttonName, UnityEngine.Events.UnityAction action, string logName)
+    {
+        GameObject buttonObj = GameObject.Find(buttonName);
+        if (buttonObj == null)
+        {
+            Debug.LogError($"GameDirectory: 未找到按钮 '{buttonName}'！");
+            return;
+        }
+        
+        Button button = buttonObj.GetComponent<Button>();
+        if (button == null)
+        {
+            // 尝试在子对象中查找
+            button = buttonObj.GetComponentInChildren<Button>();
+            if (button == null)
+            {
+                Debug.LogError($"GameDirectory: 按钮 '{buttonName}' 及其子对象中未找到 Button 组件！");
+                return;
+            }
+        }
+        
+        // 清除所有运行时监听器
+        button.onClick.RemoveAllListeners();
+        
+        // 禁用所有持久化事件（如果场景中还有残留的）
+        int persistentCount = button.onClick.GetPersistentEventCount();
+        for (int i = persistentCount - 1; i >= 0; i--)
+        {
+            button.onClick.SetPersistentListenerState(i, UnityEngine.Events.UnityEventCallState.Off);
+        }
+        
+        // 确保按钮是可交互和启用的
+        if (!button.interactable)
+        {
+            Debug.LogWarning($"GameDirectory: {logName} 的 interactable 为 false，正在启用...");
+            button.interactable = true;
+        }
+        if (!button.enabled)
+        {
+            Debug.LogWarning($"GameDirectory: {logName} 的 enabled 为 false，正在启用...");
+            button.enabled = true;
+        }
+        
+        // 检查按钮的RaycastTarget
+        UnityEngine.UI.Image buttonImage = buttonObj.GetComponent<UnityEngine.UI.Image>();
+        if (buttonImage != null && !buttonImage.raycastTarget)
+        {
+            Debug.LogWarning($"GameDirectory: {logName} 的 Image RaycastTarget 为 false，正在启用...");
+            buttonImage.raycastTarget = true;
+        }
+        
+        // 检查Canvas和GraphicRaycaster
+        Canvas canvas = buttonObj.GetComponentInParent<Canvas>();
+        if (canvas != null)
+        {
+            UnityEngine.UI.GraphicRaycaster raycaster = canvas.GetComponent<UnityEngine.UI.GraphicRaycaster>();
+            if (raycaster == null)
+            {
+                Debug.LogError($"GameDirectory: {logName} 的 Canvas 没有 GraphicRaycaster 组件！");
+            }
+            else if (!raycaster.enabled)
+            {
+                Debug.LogWarning($"GameDirectory: {logName} 的 GraphicRaycaster 未启用，正在启用...");
+                raycaster.enabled = true;
+            }
+        }
+        
+        // 验证按钮最终状态
+        Debug.Log($"GameDirectory: {logName} 最终状态 - Interactable: {button.interactable}, Enabled: {button.enabled}, GameObject Active: {buttonObj.activeInHierarchy}");
+        
+        // 绑定新的监听器
+        button.onClick.AddListener(() => {
+            Debug.Log($"========== GameDirectory: {logName} 被点击！==========");
+            Debug.Log($"GameDirectory: 准备调用 action，action 是否为 null: {action == null}");
+            try
+            {
+                if (action != null)
+                {
+                    action.Invoke();
+                    Debug.Log($"GameDirectory: {logName} 的 action 已成功调用");
+                }
+                else
+                {
+                    Debug.LogError($"GameDirectory: {logName} 的 action 为 null！");
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"GameDirectory: {logName} 的 action 调用失败: {e.Message}");
+                Debug.LogError($"StackTrace: {e.StackTrace}");
+            }
+        });
+        
+        Debug.Log($"GameDirectory: {logName} 绑定成功（已清除 {persistentCount} 个持久化事件）");
+    }
+    
     /// <summary>
     /// 加载game directory场景（从Start场景跳转）
     /// </summary>
@@ -31,57 +193,114 @@ public class SceneLoader : MonoBehaviour
     }
     
     /// <summary>
-    /// 加载SampleScene场景（从game directory场景跳转）
+    /// 加载关卡1（SampleScene）
     /// </summary>
-    public void LoadSampleScene()
+    public void LoadLevel1()
     {
-        Debug.Log("LoadSampleScene 方法被调用");
-        LoadSceneByNameOrIndex(sampleSceneName, sampleSceneIndex, "SampleScene");
+        Debug.Log("========== LoadLevel1 方法被调用 ==========");
+        Debug.Log($"LoadLevel1: sampleSceneName='{sampleSceneName}', sampleSceneIndex={sampleSceneIndex}");
+        LoadSceneByNameOrIndex(sampleSceneName, sampleSceneIndex, "关卡1 (SampleScene)");
     }
 
     /// <summary>
-    /// 加载 No.2 场景（game directory 的 Button2）
+    /// 加载关卡2（No.2）
     /// </summary>
+    public void LoadLevel2()
+    {
+        Debug.Log("========== LoadLevel2 方法被调用 ==========");
+        Debug.Log($"LoadLevel2: no2SceneName='{no2SceneName}', no2SceneIndex={no2SceneIndex}");
+        LoadSceneByNameOrIndex(no2SceneName, no2SceneIndex, "关卡2 (No.2)");
+    }
+    
+    /// <summary>
+    /// 加载关卡3（No.3）
+    /// </summary>
+    public void LoadLevel3()
+    {
+        Debug.Log("LoadLevel3 方法被调用 - 跳转到关卡3 (No.3)");
+        LoadSceneByNameOrIndex(no3SceneName, no3SceneIndex, "关卡3 (No.3)");
+    }
+    
+    /// <summary>
+    /// 加载关卡4（No.4）
+    /// </summary>
+    public void LoadLevel4()
+    {
+        Debug.Log("LoadLevel4 方法被调用 - 跳转到关卡4 (No.4)");
+        LoadSceneByNameOrIndex(no4SceneName, no4SceneIndex, "关卡4 (No.4)");
+    }
+    
+    /// <summary>
+    /// 加载关卡5（No.5）
+    /// </summary>
+    public void LoadLevel5()
+    {
+        Debug.Log("LoadLevel5 方法被调用 - 跳转到关卡5 (No.5)");
+        LoadSceneByNameOrIndex(no5SceneName, no5SceneIndex, "关卡5 (No.5)");
+    }
+    
+    /// <summary>
+    /// 加载关卡6（No.6）
+    /// </summary>
+    public void LoadLevel6()
+    {
+        Debug.Log("LoadLevel6 方法被调用 - 跳转到关卡6 (No.6)");
+        LoadSceneByNameOrIndex(no6SceneName, no6SceneIndex, "关卡6 (No.6)");
+    }
+
+    // 保留旧方法以保持向后兼容性
+    /// <summary>
+    /// 加载SampleScene场景（从game directory场景跳转）- 已废弃，请使用 LoadLevel1
+    /// </summary>
+    [System.Obsolete("请使用 LoadLevel1() 代替")]
+    public void LoadSampleScene()
+    {
+        LoadLevel1();
+    }
+
+    /// <summary>
+    /// 加载 No.2 场景（game directory 的 Button2）- 已废弃，请使用 LoadLevel2
+    /// </summary>
+    [System.Obsolete("请使用 LoadLevel2() 代替")]
     public void LoadNo2Scene()
     {
-        Debug.Log("LoadNo2Scene 方法被调用");
-        LoadSceneByNameOrIndex(no2SceneName, no2SceneIndex, "No.2");
+        LoadLevel2();
     }
     
     /// <summary>
-    /// 加载 No.3 场景（game directory 的 Button3）
+    /// 加载 No.3 场景（game directory 的 Button3）- 已废弃，请使用 LoadLevel3
     /// </summary>
+    [System.Obsolete("请使用 LoadLevel3() 代替")]
     public void LoadNo3Scene()
     {
-        Debug.Log("LoadNo3Scene 方法被调用");
-        LoadSceneByNameOrIndex(no3SceneName, no3SceneIndex, "No.3");
+        LoadLevel3();
     }
     
     /// <summary>
-    /// 加载 No.4 场景（game directory 的 Button4）
+    /// 加载 No.4 场景（game directory 的 Button4）- 已废弃，请使用 LoadLevel4
     /// </summary>
+    [System.Obsolete("请使用 LoadLevel4() 代替")]
     public void LoadNo4Scene()
     {
-        Debug.Log("LoadNo4Scene 方法被调用");
-        LoadSceneByNameOrIndex(no4SceneName, no4SceneIndex, "No.4");
+        LoadLevel4();
     }
     
     /// <summary>
-    /// 加载 No.5 场景（game directory 的 Button5）
+    /// 加载 No.5 场景（game directory 的 Button5）- 已废弃，请使用 LoadLevel5
     /// </summary>
+    [System.Obsolete("请使用 LoadLevel5() 代替")]
     public void LoadNo5Scene()
     {
-        Debug.Log("LoadNo5Scene 方法被调用");
-        LoadSceneByNameOrIndex(no5SceneName, no5SceneIndex, "No.5");
+        LoadLevel5();
     }
     
     /// <summary>
-    /// 加载 No.6 场景（game directory 的 Button6）
+    /// 加载 No.6 场景（game directory 的 Button6）- 已废弃，请使用 LoadLevel6
     /// </summary>
+    [System.Obsolete("请使用 LoadLevel6() 代替")]
     public void LoadNo6Scene()
     {
-        Debug.Log("LoadNo6Scene 方法被调用");
-        LoadSceneByNameOrIndex(no6SceneName, no6SceneIndex, "No.6");
+        LoadLevel6();
     }
 
     /// <summary>
@@ -89,7 +308,8 @@ public class SceneLoader : MonoBehaviour
     /// </summary>
     public void LoadStartScene()
     {
-        Debug.Log("LoadStartScene 方法被调用");
+        Debug.Log("========== LoadStartScene 方法被调用 ==========");
+        Debug.Log($"LoadStartScene: startSceneName='{startSceneName}', startSceneIndex={startSceneIndex}");
         LoadSceneByNameOrIndex(startSceneName, startSceneIndex, "Start");
     }
     
@@ -135,12 +355,17 @@ public class SceneLoader : MonoBehaviour
             Debug.Log($"准备加载场景: 索引={sceneIndex}, 名称='{actualSceneName}', 显示名称={displayName}");
             
             // 使用场景索引加载
-            UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
-            
-            // 注意：由于场景切换会销毁当前 GameObject，验证需要在目标场景中进行
-            // 如果场景加载失败，Unity 可能会默认加载索引 0 的场景
-            // 建议在目标场景中添加 SceneVerifier 脚本进行验证
-            Debug.Log($"场景加载命令已执行，请检查是否成功加载到场景索引 {sceneIndex}");
+            try
+            {
+                Debug.Log($"正在调用 SceneManager.LoadScene({sceneIndex})...");
+                UnityEngine.SceneManagement.SceneManager.LoadScene(sceneIndex);
+                Debug.Log($"场景加载命令已执行，场景索引 {sceneIndex} 应该正在加载...");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"场景加载失败: {e.Message}");
+                Debug.LogError($"StackTrace: {e.StackTrace}");
+            }
             return;
         }
         

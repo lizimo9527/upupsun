@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -18,6 +19,21 @@ public class GameManager : MonoBehaviour
     public float lineAngularDrag = 0.5f; // 线的角阻力
     public float lineInitialDownwardForce = 0.5f; // 线条完成时的初始向下力（帮助线条开始掉落）
     public PhysicsMaterial2D linePhysicsMaterial; // 线条的物理材质（可在Inspector中设置，降低摩擦力）
+    
+    [Header("Line Drawing Settings")]
+    [Tooltip("绘制线条的统一宽度（世界单位）")]
+    public float lineWidth = 0.12f;
+
+    [Tooltip("相邻两点之间的最小距离，避免在起点附近挤满顶点导致颜色变黑")]
+    public float minSegmentDistance = 0.05f;
+
+    [Tooltip("端点细分数量，值越大圆角越圆滑")]
+    [Range(0, 8)]
+    public int capVertices = 4;
+
+    [Tooltip("拐角细分数量，避免锐角处出现黑斑/折叠")]
+    [Range(0, 8)]
+    public int cornerVertices = 2;
     
     [Header("Sunshine Settings")]
     public GameObject sun; // 太阳对象，需要在Inspector中赋值
@@ -67,6 +83,18 @@ public class GameManager : MonoBehaviour
     public FireworksEffect fireworksEffect; // 烟花效果控制器（可选）
     public bool enableFireworks = true; // 是否启用烟花效果
     
+    [Header("Lose / Gagin Panel")]
+    [Tooltip("未达到通关条件时弹出的提示面板（gaginPanel）")]
+    public GameObject gaginPanel;
+    [Tooltip("gaginPanel 中的重新开始按钮（可选）")]
+    public Button gaginRestartButton;
+    [Tooltip("gaginPanel 中的返回 Game Directory 按钮（againButton，可选）")]
+    public Button gaginHomeButton;
+    [Tooltip("Game Directory 场景名称")]
+    public string gameDirectorySceneName = "game directory";
+    [Tooltip("生成最后一颗 sunshine 后等待的时间（秒），再检查是否通关")]
+    public float loseCheckDelay = 8.0f;
+    
     [Header("Ink System")]
     public float maxInkAmount = 100f; // 最大墨水量
     public float inkUsedForOneUnit = 1f; // 每单位长度消耗的墨水量
@@ -96,6 +124,56 @@ public class GameManager : MonoBehaviour
         totalInkUsed = 0f;
         currentInkRemaining = maxInkAmount;
         
+        // 设置画出来的线条颜色为蓝色（RGB: 145, 215, 238）
+        if (lineRenderer != null)
+        {
+            // 将 0-255 的颜色值转换为 0-1
+            Color blue = new Color(145f / 255f, 215f / 255f, 238f / 255f, 1f);
+
+            // 使用统一的颜色渐变，防止 Inspector 中残留的渐变把起点拉成黑色
+            Gradient gradient = new Gradient();
+            GradientColorKey[] colorKeys = new[]
+            {
+                new GradientColorKey(blue, 0f),
+                new GradientColorKey(blue, 1f)
+            };
+            GradientAlphaKey[] alphaKeys = new[]
+            {
+                new GradientAlphaKey(1f, 0f),
+                new GradientAlphaKey(1f, 1f)
+            };
+            gradient.SetKeys(colorKeys, alphaKeys);
+            lineRenderer.colorGradient = gradient;
+
+            lineRenderer.startColor = blue;
+            lineRenderer.endColor = blue;
+
+            // 使用统一的、不会「越叠越黑」的 Sprite Shader 材质
+            if (lineRenderer.material == null || lineRenderer.material.shader == null ||
+                !lineRenderer.material.shader.name.Contains("Sprites/Default"))
+            {
+                lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            }
+            lineRenderer.material.color = blue;
+
+            // 线宽、端点、拐角、对齐方式全部固定下来，避免受 Inspector 旧数据影响
+            lineRenderer.widthMultiplier = lineWidth;
+            lineRenderer.startWidth = lineWidth;
+            lineRenderer.endWidth = lineWidth;
+            lineRenderer.numCapVertices = Mathf.Max(0, capVertices);
+            lineRenderer.numCornerVertices = Mathf.Max(0, cornerVertices);
+            lineRenderer.alignment = LineAlignment.View;
+            lineRenderer.textureMode = LineTextureMode.Stretch;
+            // 使用本地坐标绘制线条，这样刚体移动时整条线会一起掉落
+            lineRenderer.useWorldSpace = false;
+            lineRenderer.generateLightingData = false;
+            lineRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            lineRenderer.receiveShadows = false;
+            lineRenderer.lightProbeUsage = LightProbeUsage.Off;
+            lineRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+            lineRenderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+        }
+        
         ConfigureInkSlider();
         
         // 初始化星星为点亮状态
@@ -110,6 +188,18 @@ public class GameManager : MonoBehaviour
         {
             passPanel.SetActive(false);
             SetupPassPanelButtons();
+        }
+
+        // 初始化失败面板为隐藏，并绑定按钮
+        if (gaginPanel != null)
+        {
+            gaginPanel.SetActive(false);
+            SetupGaginPanelButtons();
+        }
+        else
+        {
+            // 如果 gaginPanel 未配置，输出警告（但不影响游戏运行）
+            Debug.LogWarning("GameManager: gaginPanel 未配置。如果需要在失败时显示提示面板，请在 Inspector 中设置 gaginPanel 引用。");
         }
     }
 
@@ -301,6 +391,44 @@ public class GameManager : MonoBehaviour
             PlayFireworks();
         }
     }
+
+    /// <summary>
+    /// 显示失败提示面板（gaginPanel）
+    /// </summary>
+    private void ShowGaginPanel()
+    {
+        if (gaginPanel == null)
+        {
+            Debug.LogWarning("gaginPanel 未分配，无法显示失败面板。");
+            return;
+        }
+
+        // 避免和通关面板同时出现
+        if (passPanel != null)
+        {
+            passPanel.SetActive(false);
+        }
+
+        gaginPanel.SetActive(true);
+    }
+
+    /// <summary>
+    /// 绑定 gaginPanel 上的按钮事件
+    /// </summary>
+    private void SetupGaginPanelButtons()
+    {
+        if (gaginRestartButton != null)
+        {
+            gaginRestartButton.onClick.RemoveAllListeners();
+            gaginRestartButton.onClick.AddListener(RestartCurrentLevel);
+        }
+
+        if (gaginHomeButton != null)
+        {
+            gaginHomeButton.onClick.RemoveAllListeners();
+            gaginHomeButton.onClick.AddListener(LoadGameDirectoryScene);
+        }
+    }
     
     /// <summary>
     /// 播放烟花效果
@@ -403,6 +531,26 @@ public class GameManager : MonoBehaviour
         
         SceneManager.LoadScene(nextSceneName);
     }
+
+    /// <summary>
+    /// 返回 Game Directory 场景
+    /// </summary>
+    private void LoadGameDirectoryScene()
+    {
+        if (string.IsNullOrEmpty(gameDirectorySceneName))
+        {
+            Debug.LogWarning("gameDirectorySceneName 未设置，无法返回 Game Directory。");
+            return;
+        }
+
+        if (!Application.CanStreamedLevelBeLoaded(gameDirectorySceneName))
+        {
+            Debug.LogWarning($"场景 {gameDirectorySceneName} 无法加载，请确认已加入 Build Settings。");
+            return;
+        }
+
+        SceneManager.LoadScene(gameDirectorySceneName);
+    }
     
     private void Update()
     {
@@ -412,33 +560,78 @@ public class GameManager : MonoBehaviour
             return;
         }
         
+        // 按下鼠标开始画线时，清空上一条线的数据，避免起点叠加变黑
+        if (Input.GetMouseButtonDown(0) && canDraw)
+        {
+            pointList.Clear();
+            if (lineRenderer != null)
+            {
+                lineRenderer.positionCount = 0;
+            }
+
+            // 同时把上一次生成的碰撞体删掉，防止长时间游戏时子物体越积越多
+            // （这些碰撞体本身不渲染，但清理掉可以保证场景更干净）
+            BoxCollider2D[] oldColliders = lineRenderer.GetComponentsInChildren<BoxCollider2D>();
+            for (int i = 0; i < oldColliders.Length; i++)
+            {
+                Destroy(oldColliders[i].gameObject);
+            }
+        }
+        
         if (Input.GetMouseButton(0)&&canDraw)
         {
-            Vector2 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            // 鼠标位置（世界坐标）
+            Vector2 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            // 转换为 LineRenderer 所在物体的本地坐标，用来存在线段点列表
+            Vector2 localPosition = lineRenderer.transform.InverseTransformPoint(worldPosition);
 
-            if(pointList.Count <=1 &&Physics2D.Raycast(position, Vector3.forward, 100, layerMask))
+            // 起点附近的射线检测仍然在世界坐标系中进行
+            if(pointList.Count <=1 &&Physics2D.Raycast(worldPosition, Vector3.forward, 100, layerMask))
             {
                 return;
             }
             if(pointList.Count > 1)
             {
-                RaycastHit2D raycast = Physics2D.Raycast(position, (pointList[lineRenderer.positionCount - 1] - position).normalized, 
-                    (position - pointList[lineRenderer.positionCount-1]).magnitude, layerMask);
+                // 取上一点的世界坐标
+                Vector2 lastWorldPoint = lineRenderer.transform.TransformPoint(pointList[lineRenderer.positionCount - 1]);
+                Vector2 dir = (lastWorldPoint - worldPosition).normalized;
+                float dist = (worldPosition - lastWorldPoint).magnitude;
+                RaycastHit2D raycast = Physics2D.Raycast(worldPosition, dir, dist, layerMask);
                 if (raycast)
                 {
                     return ;
                 }
             }
-            if (!pointList.Contains(position))
+
+            // 只有当当前位置和上一个点的距离大于一定阈值时才新增点，
+            // 避免在起点附近挤满大量顶点，导致线宽叠加在一起出现「一段变黑」的情况
+            bool shouldAddPoint = false;
+
+            if (pointList.Count == 0)
+            {
+                shouldAddPoint = true;
+            }
+            else
+            {
+                Vector2 lastPoint = pointList[pointList.Count - 1];
+                float distance = Vector2.Distance(lastPoint, localPosition);
+                if (distance >= minSegmentDistance)
+                {
+                    shouldAddPoint = true;
+                }
+            }
+
+            if (shouldAddPoint)
             {
                 lineRenderer.positionCount++;
-                lineRenderer.SetPosition(lineRenderer.positionCount - 1, position);
+                // LineRenderer 使用本地坐标
+                lineRenderer.SetPosition(lineRenderer.positionCount - 1, localPosition);
                 
                 // 如果有上一个点，计算线段长度并消耗墨水
                 if (pointList.Count > 0)
                 {
                     Vector2 previousPosition = pointList[pointList.Count - 1];
-                    float segmentLength = Vector2.Distance(previousPosition, position);
+                    float segmentLength = Vector2.Distance(previousPosition, localPosition);
                     
                     // 计算并消耗墨水
                     float inkConsumed = segmentLength * inkUsedForOneUnit * Mathf.Max(0.01f, inkUsageMultiplier);
@@ -450,7 +643,7 @@ public class GameManager : MonoBehaviour
                     UpdateStarStates();
                 }
                 
-                pointList.Add(position);
+                pointList.Add(localPosition);
 
                 if(pointList.Count > 1)
                 {
@@ -459,6 +652,7 @@ public class GameManager : MonoBehaviour
                     
                     GameObject go = new GameObject("Collider");
                     go.transform.parent = lineRenderer.transform;
+                    // 使用本地坐标放置碰撞体，与 LineRenderer 的本地坐标保持一致
                     go.transform.localPosition = (point1 + point2) / 2;
                     BoxCollider2D boxCollider = go.AddComponent<BoxCollider2D>();
                     // 使用更大的宽度确保能接住sunshine，并确保长度覆盖完整线段
@@ -636,6 +830,26 @@ public class GameManager : MonoBehaviour
             // 等待间隔时间再生成下一个（游戏暂停时也会暂停）
             yield return new WaitForSeconds(sunshineSpawnInterval);
         }
+
+        // 所有 sunshine 已生成，等待一段时间后判定是否通关
+        if (loseCheckDelay > 0f)
+        {
+            yield return new WaitForSeconds(loseCheckDelay);
+        }
+
+        // 再次检查是否通关（可能在等待期间收集到了足够的 sunshine）
+        if (!gameWon)
+        {
+            // 如果 gaginPanel 已配置，显示失败面板
+            if (gaginPanel != null)
+            {
+                ShowGaginPanel();
+            }
+            else
+            {
+                Debug.LogWarning("gaginPanel 未配置，无法显示失败提示。请在 GameManager 的 Inspector 中设置 gaginPanel 引用。");
+            }
+        }
     }
     
     /// <summary>
@@ -671,4 +885,5 @@ public class GameManager : MonoBehaviour
         
         return sunshine;
     }
+
 }

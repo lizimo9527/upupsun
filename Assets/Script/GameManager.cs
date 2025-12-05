@@ -481,7 +481,19 @@ public class GameManager : MonoBehaviour
         }
         if (Input.GetMouseButtonUp(0))
         {
-            canDraw=false;
+            // 如果没有真正画出一条线（少于2个点），则认为是无效点击：不生成sunshine，也不锁死画线
+            if (pointList == null || pointList.Count < 2)
+            {
+                // 清空可能遗留的渲染点，保持可以继续画线
+                if (lineRenderer != null)
+                {
+                    lineRenderer.positionCount = 0;
+                }
+                canDraw = true;
+                return;
+            }
+
+            canDraw = false;
             Rigidbody2D lineRb = lineRenderer.gameObject.GetComponent<Rigidbody2D>();
             if (lineRb == null)
             {

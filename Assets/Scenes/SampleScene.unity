@@ -464,8 +464,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 86, y: -96.83002}
-  m_SizeDelta: {x: 108.17, y: 74.62}
+  m_AnchoredPosition: {x: 120, y: -116.2}
+  m_SizeDelta: {x: 108.2, y: 93.597}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &290334282
 GameObject:
@@ -501,8 +501,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3.3512, y: 78.811615}
-  m_SizeDelta: {x: 382.7225, y: 323.5325}
+  m_AnchoredPosition: {x: 17, y: 111}
+  m_SizeDelta: {x: 507.5, y: 421.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &290334284
 MonoBehaviour:
@@ -1696,8 +1696,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3.3499, y: -100}
-  m_SizeDelta: {x: 382.72, y: 100}
+  m_AnchoredPosition: {x: 17, y: -116.7}
+  m_SizeDelta: {x: 507.5, y: 125.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &926403569
 MonoBehaviour:
@@ -3329,9 +3329,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   containerTransform: {fileID: 0}
-  containerTopWidth: 1.2
-  containerBottomWidth: 0.8
-  containerHeight: 1.6
+  containerTopWidth: 1
+  containerBottomWidth: 0.6
+  containerHeight: 1.2
   containerVerticalOffset: 4
   sunshineSpacing: 0.2
 --- !u!61 &1232097642
@@ -3615,8 +3615,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -70, y: -96.83}
-  m_SizeDelta: {x: 114.31, y: 74.62}
+  m_AnchoredPosition: {x: -76, y: -116.2}
+  m_SizeDelta: {x: 114.3, y: 93.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1514204982
 MonoBehaviour:
@@ -4061,7 +4061,7 @@ MonoBehaviour:
   linePhysicsMaterial: {fileID: 6200000, guid: 74c44c5040d69f94fa6da692e793707c, type: 2}
   sun: {fileID: 1819058660}
   sunshinePrefab: {fileID: 1052294357}
-  sunshineCount: 100
+  sunshineCount: 60
   sunshineSpawnInterval: 0.15
   sunshineInitialForce: 1
   sunshineHorizontalSpread: 0.3
@@ -4073,7 +4073,7 @@ MonoBehaviour:
   star1: {fileID: 3000000002}
   star2: {fileID: 3000000003}
   star3: {fileID: 3000000004}
-  sunshineToWin: 50
+  sunshineToWin: 40
   passPanel: {fileID: 1614212777}
   passPanelStar1: {fileID: 1576909770}
   passPanelStar2: {fileID: 559209714}

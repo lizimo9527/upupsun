@@ -584,8 +584,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 90.454994, y: -111.419975}
-  m_SizeDelta: {x: 108.2, y: 91.6}
+  m_AnchoredPosition: {x: 87, y: -111.42}
+  m_SizeDelta: {x: 98.51, y: 98.51}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &290334282
 GameObject:
@@ -1015,8 +1015,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -82, y: -112.45}
-  m_SizeDelta: {x: 114.37, y: 98.45}
+  m_AnchoredPosition: {x: -71, y: -112.45}
+  m_SizeDelta: {x: 98.45, y: 98.45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &403513469
 MonoBehaviour:
@@ -1956,7 +1956,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -37.389008}
+  m_AnchoredPosition: {x: 0, y: -38}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &885696961
@@ -2447,8 +2447,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 62, y: -109.710014}
-  m_SizeDelta: {x: 108.86, y: 98.45}
+  m_AnchoredPosition: {x: 75, y: -112.45}
+  m_SizeDelta: {x: 98.45, y: 98.45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1018191267
 MonoBehaviour:
@@ -3932,8 +3932,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -72, y: -111.42}
-  m_SizeDelta: {x: 114.3, y: 91.6}
+  m_AnchoredPosition: {x: -80, y: -111.42}
+  m_SizeDelta: {x: 98.51, y: 98.51}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1514204982
 MonoBehaviour:
@@ -4376,7 +4376,7 @@ MonoBehaviour:
   lineAngularDrag: 0.5
   lineInitialDownwardForce: 0.5
   linePhysicsMaterial: {fileID: 6200000, guid: 74c44c5040d69f94fa6da692e793707c, type: 2}
-  lineWidth: 0.12
+  lineWidth: 0.1
   minSegmentDistance: 0.05
   capVertices: 4
   cornerVertices: 2

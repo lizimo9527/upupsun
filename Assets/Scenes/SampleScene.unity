@@ -464,8 +464,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 99.56999, y: -98.640015}
-  m_SizeDelta: {x: 89.97, y: 86}
+  m_AnchoredPosition: {x: 84.51, y: -98.635}
+  m_SizeDelta: {x: 104.53, y: 105.74}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &290334282
 GameObject:
@@ -814,8 +814,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -82, y: -112.45}
-  m_SizeDelta: {x: 114.37, y: 98.45}
+  m_AnchoredPosition: {x: -66, y: -109.71}
+  m_SizeDelta: {x: 98.84, y: 98.45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &403513469
 MonoBehaviour:
@@ -1106,7 +1106,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 19.200012, y: 0}
+  m_AnchoredPosition: {x: 19.199951, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &521451684
@@ -1965,7 +1965,7 @@ LineRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.23676439
+        time: 0.28452438
         value: 0.06513636
         inSlope: 0
         outSlope: 0
@@ -2546,8 +2546,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 62, y: -109.710014}
-  m_SizeDelta: {x: 108.86, y: 98.45}
+  m_AnchoredPosition: {x: 67, y: -109.71}
+  m_SizeDelta: {x: 99.15, y: 98.45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1018191267
 MonoBehaviour:
@@ -3479,7 +3479,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 5.1435485, y: 3.5985513}
+  m_Offset: {x: 3.7421994, y: 3.5985513}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -3490,7 +3490,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4.5510683, y: 10.767104}
+  m_Size: {x: 1.7483702, y: 10.767104}
   m_EdgeRadius: 0
 --- !u!61 &1232097635
 BoxCollider2D:
@@ -3524,7 +3524,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -5.2458673, y: 3.7935448}
+  m_Offset: {x: -3.987028, y: 3.7935448}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -3535,7 +3535,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 3.8149173, y: 11.157097}
+  m_Size: {x: 1.2972388, y: 11.157097}
   m_EdgeRadius: 0
 --- !u!61 &1232097636
 BoxCollider2D:
@@ -3569,7 +3569,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.13287926, y: -1.2234033}
+  m_Offset: {x: -0.2160101, y: -1.2234033}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -3580,7 +3580,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 8.858671, y: 1.5486376}
+  m_Size: {x: 5.3196707, y: 1.5486376}
   m_EdgeRadius: 0
 --- !u!212 &1232097637
 SpriteRenderer:
@@ -3726,7 +3726,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   containerTransform: {fileID: 0}
   containerTopWidth: 1.2
-  containerBottomWidth: 0.8
+  containerBottomWidth: 0.6
   containerHeight: 1.2
   containerVerticalOffset: 4
   sunshineSpacing: 0.2
@@ -4011,8 +4011,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -84, y: -98.64}
-  m_SizeDelta: {x: 98.45, y: 86}
+  m_AnchoredPosition: {x: -64.68, y: -98.640015}
+  m_SizeDelta: {x: 105.25, y: 105.75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1514204982
 MonoBehaviour:
@@ -4530,10 +4530,10 @@ MonoBehaviour:
   lineAngularDrag: 0.5
   lineInitialDownwardForce: 0.5
   linePhysicsMaterial: {fileID: 6200000, guid: 74c44c5040d69f94fa6da692e793707c, type: 2}
-  lineWidth: 0.12
+  lineWidth: 0.1
   minSegmentDistance: 0.05
-  capVertices: 4
-  cornerVertices: 2
+  capVertices: 6
+  cornerVertices: 4
   sun: {fileID: 1819058660}
   sunshinePrefab: {fileID: 1052294357}
   sunshineCount: 50
@@ -5364,8 +5364,8 @@ LineRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.042053223
-        value: 0.06775671
+        time: 0.08696888
+        value: 0.018164754
         inSlope: 0
         outSlope: 0
         tangentMode: 0

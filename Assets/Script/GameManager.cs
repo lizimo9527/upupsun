@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     
     [Header("Line Drawing Settings")]
     [Tooltip("绘制线条的统一宽度（世界单位）")]
-    public float lineWidth = 0.12f;
+    public float lineWidth = 0.01f;
 
     [Tooltip("相邻两点之间的最小距离，避免在起点附近挤满顶点导致颜色变黑")]
     public float minSegmentDistance = 0.05f;
@@ -157,7 +157,10 @@ public class GameManager : MonoBehaviour
             lineRenderer.material.color = blue;
 
             // 线宽、端点、拐角、对齐方式全部固定下来，避免受 Inspector 旧数据影响
-            lineRenderer.widthMultiplier = lineWidth;
+            // 同时设置宽度曲线，确保覆盖 Inspector 中的 Width Curve 设置
+            AnimationCurve widthCurve = AnimationCurve.Constant(0f, 1f, lineWidth);
+            lineRenderer.widthCurve = widthCurve;
+            lineRenderer.widthMultiplier = 1f; // 使用曲线时，multiplier 设为 1
             lineRenderer.startWidth = lineWidth;
             lineRenderer.endWidth = lineWidth;
             lineRenderer.numCapVertices = Mathf.Max(0, capVertices);
@@ -200,6 +203,20 @@ public class GameManager : MonoBehaviour
         {
             // 如果 gaginPanel 未配置，输出警告（但不影响游戏运行）
             Debug.LogWarning("GameManager: gaginPanel 未配置。如果需要在失败时显示提示面板，请在 Inspector 中设置 gaginPanel 引用。");
+        }
+    }
+
+    private void Start()
+    {
+        // 在 Start 中再次确保线宽设置被应用（特别是对于 DontDestroyOnLoad 对象）
+        if (lineRenderer != null)
+        {
+            // 同时设置宽度曲线，确保覆盖 Inspector 中的 Width Curve 设置
+            AnimationCurve widthCurve = AnimationCurve.Constant(0f, 1f, lineWidth);
+            lineRenderer.widthCurve = widthCurve;
+            lineRenderer.widthMultiplier = 1f; // 使用曲线时，multiplier 设为 1
+            lineRenderer.startWidth = lineWidth;
+            lineRenderer.endWidth = lineWidth;
         }
     }
 
@@ -567,6 +584,13 @@ public class GameManager : MonoBehaviour
             if (lineRenderer != null)
             {
                 lineRenderer.positionCount = 0;
+                // 强制应用线宽设置，确保覆盖 Inspector 中的旧值（特别是 DontDestroyOnLoad 对象）
+                // 同时设置宽度曲线，确保覆盖 Inspector 中的 Width Curve 设置
+                AnimationCurve widthCurve = AnimationCurve.Constant(0f, 1f, lineWidth);
+                lineRenderer.widthCurve = widthCurve;
+                lineRenderer.widthMultiplier = 1f; // 使用曲线时，multiplier 设为 1
+                lineRenderer.startWidth = lineWidth;
+                lineRenderer.endWidth = lineWidth;
             }
 
             // 同时把上一次生成的碰撞体删掉，防止长时间游戏时子物体越积越多

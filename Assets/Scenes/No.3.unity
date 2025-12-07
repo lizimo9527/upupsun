@@ -584,8 +584,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 90.47, y: -84.003}
-  m_SizeDelta: {x: 108.17, y: 88.155}
+  m_AnchoredPosition: {x: 79, y: -77.943}
+  m_SizeDelta: {x: 100.4, y: 100.26}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &290334282
 GameObject:
@@ -1009,8 +1009,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -82, y: -112.45}
-  m_SizeDelta: {x: 114.37, y: 98.45}
+  m_AnchoredPosition: {x: -68, y: -111.08}
+  m_SizeDelta: {x: 98.51, y: 101.19}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &403513469
 MonoBehaviour:
@@ -2463,8 +2463,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 62, y: -109.710014}
-  m_SizeDelta: {x: 108.86, y: 98.45}
+  m_AnchoredPosition: {x: 67, y: -111.08}
+  m_SizeDelta: {x: 98.51, y: 98.51}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1018191267
 MonoBehaviour:
@@ -3430,8 +3430,8 @@ Transform:
   m_GameObject: {fileID: 1232097633}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.41, y: -3.42, z: 0}
-  m_LocalScale: {x: 0.10764343, y: 0.112555034, z: 1}
+  m_LocalPosition: {x: -0.3202, y: -3.42, z: 0}
+  m_LocalScale: {x: 0.11640536, y: 0.112555034, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -4090,8 +4090,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -72, y: -84}
-  m_SizeDelta: {x: 114.31, y: 88.15}
+  m_AnchoredPosition: {x: -66.94, y: -77.948}
+  m_SizeDelta: {x: 100.72, y: 100.25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1514204982
 MonoBehaviour:
@@ -4657,7 +4657,7 @@ MonoBehaviour:
   lineAngularDrag: 0.5
   lineInitialDownwardForce: 0.5
   linePhysicsMaterial: {fileID: 6200000, guid: 74c44c5040d69f94fa6da692e793707c, type: 2}
-  lineWidth: 0.12
+  lineWidth: 0.1
   minSegmentDistance: 0.05
   capVertices: 4
   cornerVertices: 2
